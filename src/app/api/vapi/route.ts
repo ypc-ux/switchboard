@@ -104,9 +104,9 @@ async function handleToolCalls(
     return new Response("ok", { status: 200 });
   }
 
-  const toolCalls = msg.message?.toolCalls as Array<Record<string, unknown>> | undefined;
+  const toolCallList = msg.message?.toolCalls?.toolCallList as Array<Record<string, unknown>> | undefined;
 
-  if (!toolCalls || !Array.isArray(toolCalls)) {
+  if (!toolCallList || !Array.isArray(toolCallList)) {
     return new Response(JSON.stringify({ results: [] } as Vapi.ServerMessageResponseToolCalls), {
       status: 200,
       headers: { "content-type": "application/json" },
@@ -115,7 +115,7 @@ async function handleToolCalls(
 
   const results: Array<Record<string, unknown>> = [];
 
-  for (const call of toolCalls) {
+  for (const call of toolCallList) {
     const callAny = call as any;
     const toolName = callAny.function?.name as string | undefined;
     const toolCallId = callAny.toolCallId as string | undefined;
@@ -184,11 +184,17 @@ async function handleToolCalls(
           ? slots.filter((s) => s.start.toISOString().startsWith(preferredDate))
           : slots;
 
-        const slotDescriptions = filtered.slice(0, 5).map((s) => `${s.label} (${s.start.toISOString()})`);
+        const slotObjects = filtered.slice(0, 5).map((s) => ({
+          start: s.start.toISOString(),
+          end: s.end.toISOString(),
+          label: s.label,
+        }));
 
         results.push({
           toolCallId,
-          result: slotDescriptions.length > 0 ? slotDescriptions.join("\n") : "No available slots",
+          result: {
+            slots: slotObjects.length > 0 ? slotObjects : [],
+          },
         });
       } else if (toolName === "book_appointment") {
         const serviceName = args?.service_name as string | undefined;
@@ -241,13 +247,14 @@ async function handleToolCalls(
 
         const { error } = await db().from("bookings").insert({
           client_id: handoff.client_id,
-          service_name: serviceName,
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
+          service: serviceName,
+          starts_at: startTime.toISOString(),
+          ends_at: endTime.toISOString(),
           contact_name: contactName,
           contact_phone: contactPhone,
           notes: (args?.notes as string) || null,
           requested_window: (args?.requested_window as string) || null,
+          source: "voice_agent",
         });
 
         if (error) {

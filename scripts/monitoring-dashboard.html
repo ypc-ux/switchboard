@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Agent Monitoring Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --success: #22c55e;
+      --warning: #eab308;
+      --error: #ef4444;
+      --info: #3b82f6;
+      --accent: #8b5cf6;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --surface: #f1f5f9;
+        --border: #cbd5e1;
+        --text: #1e293b;
+        --text-dim: #64748b;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--success);
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-subtext {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge.success {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--success);
+    }
+
+    .badge.pending {
+      background: rgba(235, 179, 8, 0.2);
+      color: var(--warning);
+    }
+
+    .badge.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--error);
+    }
+
+    .text-dim {
+      color: var(--text-dim);
+    }
+
+    .chart {
+      height: 200px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px;
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 2px;
+      position: relative;
+      min-height: 20px;
+      transition: all 0.2s;
+    }
+
+    .bar:hover {
+      opacity: 0.8;
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      white-space: nowrap;
+      color: var(--text-dim);
+    }
+
+    .bar-value {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 1200px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sample-table {
+      font-size: 13px;
+    }
+
+    .time-str {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .client-name {
+      font-weight: 600;
+    }
+
+    .call-detail {
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 13px;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 12px;
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>🎙️ Voice Agent Dashboard</h1>
+        <p class="text-dim">Real-time monitoring of Vapi voice agent system</p>
+      </div>
+      <div class="status-badge">● System Live</div>
+    </header>
+
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">47</div>
+        <div class="metric-label">Total Calls</div>
+        <div class="metric-subtext">Last 7 days</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">38</div>
+        <div class="metric-label">Bookings Made</div>
+        <div class="metric-subtext">80.9% success rate</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">4.2m</div>
+        <div class="metric-label">Avg Call Duration</div>
+        <div class="metric-subtext">Range: 1m 20s - 8m 45s</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-value">$19.84</div>
+        <div class="metric-label">Total Agent Cost</div>
+        <div class="metric-subtext">$0.28 - $0.58 per call</div>
+      </div>
+    </div>
+
+    <div class="two-column">
+      <!-- Calls by Outcome -->
+      <div class="section">
+        <div class="section-title">📊 Calls by Outcome (7 days)</div>
+        <div class="card">
+          <div class="chart">
+            <div class="bar" style="height: 85%;">
+              <div class="bar-value">38</div>
+              <div class="bar-label">Booked</div>
+            </div>
+            <div class="bar" style="height: 30%; background: rgba(235, 179, 8, 0.6);">
+              <div class="bar-value">6</div>
+              <div class="bar-label">Escalated</div>
+            </div>
+            <div class="bar" style="height: 15%; background: rgba(239, 68, 68, 0.6);">
+              <div class="bar-value">3</div>
+              <div class="bar-label">No Booking</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tenant Resolution Signals -->
+      <div class="section">
+        <div class="section-title">🔗 Tenant Resolution Signals</div>
+        <div class="card">
+          <table class="sample-table">
+            <tr>
+              <th>Signal</th>
+              <th>Count</th>
+              <th>Success %</th>
+            </tr>
+            <tr>
+              <td><strong>Token</strong> (primary)</td>
+              <td>42</td>
+              <td><span class="badge success">100%</span></td>
+            </tr>
+            <tr>
+              <td><strong>Dialed Number</strong> (fallback 1)</td>
+              <td>4</td>
+              <td><span class="badge success">100%</span></td>
+            </tr>
+            <tr>
+              <td><strong>Recent Handoff</strong> (fallback 2)</td>
+              <td>1</td>
+              <td><span class="badge success">100%</span></td>
+            </tr>
+            <tr>
+              <td>Failed to resolve</td>
+              <td>0</td>
+              <td><span class="badge error">—</span></td>
+            </tr>
+          </table>
+        </div>
+        <p class="text-dim" style="margin-top: 12px; font-size: 12px;">✓ Token signal is working. Dead fallback paths can be deleted in production.</p>
+      </div>
+    </div>
+
+    <!-- Recent Calls -->
+    <div class="section">
+      <div class="section-title">📞 Recent Calls (Last 10)</div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Client</th>
+              <th>Caller</th>
+              <th>Duration</th>
+              <th>Outcome</th>
+              <th>Cost</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="time-str">2 min ago</td>
+              <td class="client-name">Demo Salon</td>
+              <td>+1 (415) 555-2671</td>
+              <td>3m 22s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.38</td>
+              <td class="call-detail">Haircut Thursday 2pm</td>
+            </tr>
+            <tr>
+              <td class="time-str">8 min ago</td>
+              <td class="client-name">NYC Dental</td>
+              <td>+1 (212) 555-0142</td>
+              <td>2m 15s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.28</td>
+              <td class="call-detail">Cleaning Tuesday 9am</td>
+            </tr>
+            <tr>
+              <td class="time-str">14 min ago</td>
+              <td class="client-name">Zen Yoga</td>
+              <td>+1 (303) 555-0198</td>
+              <td>4m 45s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.42</td>
+              <td class="call-detail">Beginner Yoga Friday 6pm</td>
+            </tr>
+            <tr>
+              <td class="time-str">22 min ago</td>
+              <td class="client-name">Demo Salon</td>
+              <td>+1 (415) 555-2672</td>
+              <td>5m 12s</td>
+              <td><span class="badge pending">Escalated</span></td>
+              <td>$0.52</td>
+              <td class="call-detail">Complex request → human</td>
+            </tr>
+            <tr>
+              <td class="time-str">31 min ago</td>
+              <td class="client-name">Mike's Pizza</td>
+              <td>+1 (312) 555-0043</td>
+              <td>2m 01s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.25</td>
+              <td class="call-detail">Large pizza delivery</td>
+            </tr>
+            <tr>
+              <td class="time-str">41 min ago</td>
+              <td class="client-name">NYC Dental</td>
+              <td>+1 (212) 555-0156</td>
+              <td>1m 30s</td>
+              <td><span class="badge error">No Booking</span></td>
+              <td>$0.18</td>
+              <td class="call-detail">Caller hung up</td>
+            </tr>
+            <tr>
+              <td class="time-str">52 min ago</td>
+              <td class="client-name">Zen Yoga</td>
+              <td>+1 (303) 555-0207</td>
+              <td>3m 48s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.35</td>
+              <td class="call-detail">Power Yoga Wednesday 5:30pm</td>
+            </tr>
+            <tr>
+              <td class="time-str">58 min ago</td>
+              <td class="client-name">Demo Salon</td>
+              <td>+1 (415) 555-2673</td>
+              <td>3m 55s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.41</td>
+              <td class="call-detail">Color service next Saturday</td>
+            </tr>
+            <tr>
+              <td class="time-str">1h 04m ago</td>
+              <td class="client-name">Mike's Pizza</td>
+              <td>+1 (312) 555-0051</td>
+              <td>2m 28s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.32</td>
+              <td class="call-detail">Order placed + delivery</td>
+            </tr>
+            <tr>
+              <td class="time-str">1h 14m ago</td>
+              <td class="client-name">Demo Salon</td>
+              <td>+1 (415) 555-2674</td>
+              <td>4m 06s</td>
+              <td><span class="badge success">Booked</span></td>
+              <td>$0.39</td>
+              <td class="call-detail">Styling Friday evening</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Text-Back Status -->
+    <div class="section">
+      <div class="section-title">📤 Text-Back Messages (Last 24h)</div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Type</th>
+              <th>To</th>
+              <th>Content</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="time-str">2 min ago</td>
+              <td>Confirmation</td>
+              <td>+1 (415) 555-2671</td>
+              <td class="call-detail">Your haircut is booked for Thursday at 2:00 PM</td>
+              <td><span class="badge success">Sent</span></td>
+            </tr>
+            <tr>
+              <td class="time-str">8 min ago</td>
+              <td>Confirmation</td>
+              <td>+1 (212) 555-0142</td>
+              <td class="call-detail">Cleaning appointment confirmed for Tuesday at 9:00 AM</td>
+              <td><span class="badge success">Sent</span></td>
+            </tr>
+            <tr>
+              <td class="time-str">14 min ago</td>
+              <td>Confirmation</td>
+              <td>+1 (303) 555-0198</td>
+              <td class="call-detail">Beginner Yoga class booked for Friday at 6:00 PM</td>
+              <td><span class="badge success">Sent</span></td>
+            </tr>
+            <tr>
+              <td class="time-str">31 min ago</td>
+              <td>Confirmation</td>
+              <td>+1 (312) 555-0043</td>
+              <td class="call-detail">Order placed! Your pizza will arrive in ~35 minutes</td>
+              <td><span class="badge success">Sent</span></td>
+            </tr>
+            <tr>
+              <td class="time-str">41 min ago</td>
+              <td>Missed Call</td>
+              <td>+1 (212) 555-0156</td>
+              <td class="call-detail">Sorry we missed you at NYC Dental. Want to book? [link]</td>
+              <td><span class="badge pending">Deferred</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="section">
+      <div class="section-title">🔧 System Health</div>
+      <div class="card">
+        <table class="sample-table">
+          <tr>
+            <th>Component</th>
+            <th>Status</th>
+            <th>Uptime</th>
+          </tr>
+          <tr>
+            <td><strong>Vapi Webhooks</strong></td>
+            <td><span class="badge success">Healthy</span></td>
+            <td>99.8%</td>
+          </tr>
+          <tr>
+            <td><strong>Availability Slot Generation</strong></td>
+            <td><span class="badge success">Healthy</span></td>
+            <td>100%</td>
+          </tr>
+          <tr>
+            <td><strong>Database Queries</strong></td>
+            <td><span class="badge success">Healthy</span></td>
+            <td>99.9%</td>
+          </tr>
+          <tr>
+            <td><strong>Text-Back Delivery</strong></td>
+            <td><span class="badge success">Healthy</span></td>
+            <td>99.7%</td>
+          </tr>
+          <tr>
+            <td><strong>Idempotency (claimEvent)</strong></td>
+            <td><span class="badge success">Healthy</span></td>
+            <td>100% (0 double-books)</td>
+          </tr>
+          <tr>
+            <td><strong>Orphaned Handoff Drain</strong></td>
+            <td><span class="badge success">Healthy</span></td>
+            <td>Last run: 2 min ago</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>📊 This dashboard shows sample data. Connect to your Supabase project to see live metrics.</p>
+      <p style="margin-top: 8px;">🔧 Configure: Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables</p>
+    </div>
+  </div>
+</body>
+</html>

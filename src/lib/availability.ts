@@ -26,14 +26,14 @@ export async function availableSlots(
   // Load existing bookings to exclude
   const { data: bookings, error: bookingError } = await db()
     .from("bookings")
-    .select("start_time, end_time")
+    .select("starts_at, ends_at")
     .eq("client_id", clientId)
-    .gte("end_time", new Date().toISOString());
+    .gte("ends_at", new Date().toISOString());
 
   if (bookingError) throw new Error(`booking load failed: ${bookingError.message}`);
 
-  const bookedRanges = (bookings as Array<{ start_time: string; end_time: string }> | null)?.map(
-    (b) => ({ start: new Date(b.start_time), end: new Date(b.end_time) }),
+  const bookedRanges = (bookings as Array<{ starts_at: string; ends_at: string }> | null)?.map(
+    (b) => ({ start: new Date(b.starts_at), end: new Date(b.ends_at) }),
   ) ?? [];
 
   const leadTimeMinutes = rules.lead_time_minutes ?? 0;
