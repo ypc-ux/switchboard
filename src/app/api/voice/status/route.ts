@@ -5,6 +5,7 @@ import { readFormBody, verifyTwilioSignature, emptyTwiml } from "@/lib/twilio";
 import { claimEvent } from "@/lib/idempotency";
 import { sendTextback } from "@/lib/textback";
 import { getCrm } from "@/lib/crm";
+import { mintHandoffToken } from "@/lib/vapi/handoff";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
 
   if (!missed) return emptyTwiml();
 
-  // Only the first delivery of this event may text. Twilio retries.
+  // Only the first delivery of this event may proceed. Twilio retries.
   const first = await claimEvent(CallSid, `dial_status:${status}`);
   if (!first) {
     console.info("duplicate dial status ignored", { CallSid, status });
@@ -62,10 +63,32 @@ export async function POST(req: Request) {
     .eq("twilio_call_sid", CallSid)
     .maybeSingle();
 
+  const callId = (call.data as { id: string } | null)?.id ?? null;
+
+  // If voice agent is enabled, hand off to Vapi. Otherwise send text-back now.
+  if (client.voice_agent_enabled) {
+    try {
+      const handoffToken = await mintHandoffToken(client, callId, From, CallSid);
+      const sipUri = `sip:${client.vapi_sip_domain}?token=${handoffToken}`;
+      const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Dial>
+    <Sip>${sipUri}</Sip>
+  </Dial>
+</Response>`;
+      console.info("handoff to vapi", { client: client.slug, token: handoffToken });
+      return new Response(twiml, { status: 200, headers: { "content-type": "application/xml" } });
+    } catch (e) {
+      console.error("vapi handoff failed", { client: client.slug, error: String(e) });
+      // Fall through to text-back if handoff fails
+    }
+  }
+
+  // Text-back: either agent is disabled or handoff failed
   const outcome = await sendTextback({
     client,
     toNumber: From,
-    callId: (call.data as { id: string } | null)?.id ?? null,
+    callId,
     contactId: contact.id,
     optedOut: contact.opted_out,
   });

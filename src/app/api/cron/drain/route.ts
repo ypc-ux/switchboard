@@ -1,13 +1,15 @@
 import { db } from "@/lib/supabase";
 import { env } from "@/lib/env";
-import { deliver } from "@/lib/textback";
+import { deliver, sendTextback } from "@/lib/textback";
+import { claimEvent } from "@/lib/idempotency";
+import { upsertContact } from "@/lib/clients";
 import type { Client } from "@/lib/clients";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Drains messages that quiet hours deferred. Without this, "deferred"
- * would quietly mean "dropped".
+ * Drains messages that quiet hours deferred, and sweeps for orphaned
+ * voice handoffs that never reported (SIP failed, Vapi down).
  *
  * Point Vercel Cron at this every 15 minutes. Auth is a bearer secret
  * because the route sends real SMS.
@@ -82,5 +84,58 @@ export async function POST(req: Request) {
     results[outcome] = (results[outcome] ?? 0) + 1;
   }
 
-  return Response.json({ drained: rows.length, results });
+  // Sweep for orphaned voice handoffs (never got end-of-call-report).
+  // These are handoffs older than the client's agent_max_seconds with no report.
+  const orphanedResults: Record<string, number> = {};
+
+  const { data: orphanedHandoffs, error: orphanError } = await db()
+    .from("voice_handoffs")
+    .select("id, client_id, caller_number, created_at, client:clients(*)")
+    .is("consumed_at", null)
+    .order("created_at", { ascending: true })
+    .limit(100);
+
+  if (orphanError) {
+    console.error("orphaned handoff query failed", { error: orphanError.message });
+  } else if (orphanedHandoffs) {
+    for (const row of orphanedHandoffs) {
+      const handoff = row as any;
+      const clientData = (handoff.client as any)?.[0] || handoff.client;
+      if (!clientData) continue;
+
+      const now = new Date();
+      const handoffAge = (now.getTime() - new Date(handoff.created_at).getTime()) / 1000;
+      const maxSeconds = (clientData as any).agent_max_seconds || 300;
+
+      if (handoffAge > maxSeconds) {
+        // Only text once per handoff
+        const eventId = `orphaned_handoff:${handoff.id}`;
+        const first = await claimEvent(handoff.id, eventId, "vapi");
+        if (!first) continue;
+
+        try {
+          await upsertContact(handoff.client_id, handoff.caller_number);
+          await sendTextback({
+            client: clientData as Client,
+            toNumber: handoff.caller_number,
+            callId: null,
+          });
+          orphanedResults["textback_sent"] = (orphanedResults["textback_sent"] ?? 0) + 1;
+          console.info("orphaned handoff text-back sent", { handoffId: handoff.id });
+        } catch (e) {
+          orphanedResults["textback_failed"] = (orphanedResults["textback_failed"] ?? 0) + 1;
+          console.error("orphaned handoff text-back failed", {
+            handoffId: handoff.id,
+            error: String(e),
+          });
+        }
+      }
+    }
+  }
+
+  return Response.json({
+    drained: rows.length,
+    results,
+    orphaned: Object.keys(orphanedResults).length > 0 ? orphanedResults : undefined,
+  });
 }

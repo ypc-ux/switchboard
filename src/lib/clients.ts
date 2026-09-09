@@ -17,6 +17,13 @@ export interface Client {
   crm_config: Record<string, unknown>;
   sms_dry_run: boolean;
   active: boolean;
+  voice_agent_enabled?: boolean;
+  vapi_sip_domain?: string;
+  voice_provider?: string;
+  voice_id?: string;
+  agent_greeting?: string;
+  agent_instructions?: string;
+  agent_max_seconds?: number;
 }
 
 /**
