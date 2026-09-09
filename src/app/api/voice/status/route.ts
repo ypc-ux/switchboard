@@ -6,6 +6,8 @@ import { claimEvent } from "@/lib/idempotency";
 import { sendTextback } from "@/lib/textback";
 import { getCrm } from "@/lib/crm";
 import { mintHandoffToken } from "@/lib/vapi/handoff";
+import { shouldRouteToDograh } from "@/lib/feature-flags";
+import { recordCallMetric } from "@/lib/metrics";
 
 export const dynamic = "force-dynamic";
 
@@ -65,22 +67,48 @@ export async function POST(req: Request) {
 
   const callId = (call.data as { id: string } | null)?.id ?? null;
 
-  // If voice agent is enabled, hand off to Vapi. Otherwise send text-back now.
+  // If voice agent is enabled, check canary flag to route to Dograh or Vapi
   if (client.voice_agent_enabled) {
-    try {
-      const handoffToken = await mintHandoffToken(client, callId, From, CallSid);
-      const sipUri = `sip:${client.vapi_sip_domain}?token=${handoffToken}`;
-      const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+    const routeToDograh = await shouldRouteToDograh(From);
+
+    if (routeToDograh) {
+      // Canary: route to Dograh (new voice agent)
+      try {
+        console.info("routing to dograh canary", { client: client.slug, caller: From });
+        // TODO: Implement Dograh handoff
+        // For now, fall through to text-back as Dograh routes are being developed
+        await recordCallMetric({
+          client_id: client.id,
+          caller_number: From,
+          call_sid: CallSid,
+          routed_to: "dograh",
+        });
+      } catch (e) {
+        console.error("dograh handoff would fail", { client: client.slug, error: String(e) });
+      }
+    } else {
+      // Control: route to Vapi (existing voice agent)
+      try {
+        const handoffToken = await mintHandoffToken(client, callId, From, CallSid);
+        const sipUri = `sip:${client.vapi_sip_domain}?token=${handoffToken}`;
+        const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Dial>
     <Sip>${sipUri}</Sip>
   </Dial>
 </Response>`;
-      console.info("handoff to vapi", { client: client.slug, token: handoffToken });
-      return new Response(twiml, { status: 200, headers: { "content-type": "application/xml" } });
-    } catch (e) {
-      console.error("vapi handoff failed", { client: client.slug, error: String(e) });
-      // Fall through to text-back if handoff fails
+        console.info("handoff to vapi", { client: client.slug, token: handoffToken });
+        await recordCallMetric({
+          client_id: client.id,
+          caller_number: From,
+          call_sid: CallSid,
+          routed_to: "vapi",
+        });
+        return new Response(twiml, { status: 200, headers: { "content-type": "application/xml" } });
+      } catch (e) {
+        console.error("vapi handoff failed", { client: client.slug, error: String(e) });
+        // Fall through to text-back if handoff fails
+      }
     }
   }
 
@@ -91,6 +119,14 @@ export async function POST(req: Request) {
     callId,
     contactId: contact.id,
     optedOut: contact.opted_out,
+  });
+
+  // Record textback metric
+  await recordCallMetric({
+    client_id: client.id,
+    caller_number: From,
+    call_sid: CallSid,
+    routed_to: "textback",
   });
 
   try {
