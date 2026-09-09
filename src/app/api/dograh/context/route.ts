@@ -87,20 +87,20 @@ export async function GET(req: Request) {
  * Input: { mon: [['09:00', '17:00']], tue: [...], ... }
  * Output: "Monday: 9:00 AM - 5:00 PM\nTuesday: 9:00 AM - 5:00 PM\n..."
  */
-function formatBusinessHours(hours: Record<string, string[][]>): string {
-  const dayNames = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-  const displayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+function formatBusinessHours(hours: Partial<Record<string, [string, string][]>>): string {
+  const dayNames = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+  const displayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
 
   const lines: string[] = [];
   for (let i = 0; i < dayNames.length; i++) {
-    const dayKey = dayNames[i];
-    const dayName = displayNames[i];
+    const dayKey = dayNames[i]!;
+    const dayName = displayNames[i]!;
     const dayHours = hours[dayKey] || [];
 
     if (dayHours.length === 0) {
       lines.push(`${dayName}: Closed`);
     } else {
-      const intervals = dayHours.map(([open, close]) => `${open} - ${close}`).join(", ");
+      const intervals = dayHours.map(([open, close]: [string, string]) => `${open} - ${close}`).join(", ");
       lines.push(`${dayName}: ${intervals}`);
     }
   }
