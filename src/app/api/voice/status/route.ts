@@ -8,6 +8,7 @@ import { getCrm } from "@/lib/crm";
 import { mintHandoffToken } from "@/lib/vapi/handoff";
 import { shouldRouteToDograh } from "@/lib/feature-flags";
 import { recordCallMetric } from "@/lib/metrics";
+import { getDograhConfig, buildDograhDialTwiml } from "@/lib/dograh/handoff";
 
 export const dynamic = "force-dynamic";
 
@@ -74,17 +75,24 @@ export async function POST(req: Request) {
     if (routeToDograh) {
       // Canary: route to Dograh (new voice agent)
       try {
-        console.info("routing to dograh canary", { client: client.slug, caller: From });
-        // TODO: Implement Dograh handoff
-        // For now, fall through to text-back as Dograh routes are being developed
-        await recordCallMetric({
-          client_id: client.id,
-          caller_number: From,
-          call_sid: CallSid,
-          routed_to: "dograh",
-        });
+        const dograhConfig = getDograhConfig();
+        if (!dograhConfig.enabled || !dograhConfig.sipDomain) {
+          console.warn("dograh not configured, falling back to textback", { client: client.slug });
+          // Fall through to textback
+        } else {
+          const twiml = buildDograhDialTwiml(dograhConfig, client.id);
+          console.info("handoff to dograh", { client: client.slug, domain: dograhConfig.sipDomain });
+          await recordCallMetric({
+            client_id: client.id,
+            caller_number: From,
+            call_sid: CallSid,
+            routed_to: "dograh",
+          });
+          return new Response(twiml, { status: 200, headers: { "content-type": "application/xml" } });
+        }
       } catch (e) {
-        console.error("dograh handoff would fail", { client: client.slug, error: String(e) });
+        console.error("dograh handoff failed", { client: client.slug, error: String(e) });
+        // Fall through to textback on error
       }
     } else {
       // Control: route to Vapi (existing voice agent)
