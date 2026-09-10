@@ -1,0 +1,99 @@
+{
+  "projectName": "Switchboard",
+  "projectDescription": "SaaS platform for voice agent routing and booking management",
+  "settings": {
+    "theme": "auto",
+    "model": "claude-haiku-4-5-20251001"
+  },
+  "optimization": {
+    "headroom": {
+      "enabled": true,
+      "autoCompressLargeFiles": true,
+      "fileSizeThreshold": 5000
+    },
+    "graphify": {
+      "enabled": true,
+      "autoRebuild": "daily",
+      "cachePath": ".claude/knowledge-graph.json"
+    },
+    "codeBurn": {
+      "enabled": true,
+      "trackTokenUsage": true,
+      "reportFrequency": "weekly",
+      "dataPath": ".claude/code-burn.json"
+    },
+    "ponytail": {
+      "enabled": true,
+      "autoOptimizeVerboseResponses": true,
+      "verbosityThreshold": 800
+    }
+  },
+  "hooks": {
+    "claude.before_message_submit": [
+      {
+        "name": "Graphify Lookup",
+        "description": "Check knowledge graph for referenced files before sending",
+        "script": "node .claude/skills/graphify/builder.js --view",
+        "condition": "message.includes('what') || message.includes('where') || message.includes('how')"
+      }
+    ],
+    "claude.after_response": [
+      {
+        "name": "Ponytail Analysis",
+        "description": "Analyze response verbosity and offer optimization",
+        "script": "node .claude/skills/ponytail/optimizer.js --analyze",
+        "condition": "response.words > 800"
+      }
+    ],
+    "claude.on_idle": [
+      {
+        "name": "Daily Code Burn Report",
+        "description": "Generate daily token usage analytics",
+        "script": "node .claude/skills/code-burn/tracker.js",
+        "frequency": "daily",
+        "time": "09:00"
+      }
+    ]
+  },
+  "allowlist": [
+    {
+      "tool": "Read",
+      "scope": "project"
+    },
+    {
+      "tool": "Bash",
+      "scope": "project",
+      "allowedCommands": [
+        "node .claude/skills/**/*.js",
+        "grep",
+        "find"
+      ]
+    },
+    {
+      "tool": "Glob",
+      "scope": "project"
+    },
+    {
+      "tool": "Grep",
+      "scope": "project"
+    }
+  ],
+  "skills": {
+    "headroom": {
+      "path": ".claude/skills/headroom",
+      "enabled": true
+    },
+    "graphify": {
+      "path": ".claude/skills/graphify",
+      "enabled": true
+    },
+    "code-burn": {
+      "path": ".claude/skills/code-burn",
+      "enabled": true
+    },
+    "ponytail": {
+      "path": ".claude/skills/ponytail",
+      "enabled": true
+    }
+  }
+}

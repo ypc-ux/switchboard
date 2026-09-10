@@ -1,0 +1,1301 @@
+{
+  "files": {
+    "next-env.d.ts": {
+      "imports": [],
+      "exports": [],
+      "functions": [],
+      "classes": [],
+      "linesOfCode": 7,
+      "lastScan": "2026-09-10T03:30:02.275Z"
+    },
+    "next.config.ts": {
+      "imports": [],
+      "exports": [
+        "nextConfig"
+      ],
+      "functions": [],
+      "classes": [],
+      "linesOfCode": 9,
+      "lastScan": "2026-09-10T03:30:02.562Z"
+    },
+    "scripts/mock-vapi-server.ts": {
+      "imports": [
+        "http",
+        "crypto"
+      ],
+      "exports": [],
+      "functions": [
+        "delay",
+        "run"
+      ],
+      "classes": [
+        "MockVapiServer"
+      ],
+      "linesOfCode": 499,
+      "lastScan": "2026-09-10T03:30:02.565Z"
+    },
+    "scripts/seed-client.ts": {
+      "imports": [
+        "@supabase/supabase-js"
+      ],
+      "exports": [],
+      "functions": [
+        "arg",
+        "required",
+        "main"
+      ],
+      "classes": [],
+      "linesOfCode": 77,
+      "lastScan": "2026-09-10T03:30:02.566Z"
+    },
+    "scripts/seed-test-data.ts": {
+      "imports": [
+        "../src/lib/supabase",
+        "crypto"
+      ],
+      "exports": [],
+      "functions": [
+        "seed"
+      ],
+      "classes": [
+        "for"
+      ],
+      "linesOfCode": 276,
+      "lastScan": "2026-09-10T03:30:02.567Z"
+    },
+    "scripts/simulate-voice.ts": {
+      "imports": [
+        "../src/lib/supabase",
+        "../src/lib/knowledge",
+        "../src/lib/vapi/assistant"
+      ],
+      "exports": [],
+      "functions": [
+        "seed",
+        "testAssistantRequest",
+        "testBookingIdempotency",
+        "testEndOfCallReport",
+        "main",
+        "toolCount",
+        "tools",
+        "handoffId",
+        "callId"
+      ],
+      "classes": [],
+      "linesOfCode": 306,
+      "lastScan": "2026-09-10T03:30:02.568Z"
+    },
+    "scripts/simulate.ts": {
+      "imports": [
+        "twilio"
+      ],
+      "exports": [],
+      "functions": [
+        "arg",
+        "post",
+        "main"
+      ],
+      "classes": [],
+      "linesOfCode": 67,
+      "lastScan": "2026-09-10T03:30:02.569Z"
+    },
+    "scripts/verify-logic.ts": {
+      "imports": [
+        "../src/lib/quiet-hours",
+        "../src/lib/textback"
+      ],
+      "exports": [],
+      "functions": [
+        "eq"
+      ],
+      "classes": [],
+      "linesOfCode": 52,
+      "lastScan": "2026-09-10T03:30:02.697Z"
+    },
+    "src/app/api/admin/canary/route.ts": {
+      "imports": [
+        "@/lib/feature-flags",
+        "@/lib/metrics"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "authorize",
+        "GET",
+        "POST"
+      ],
+      "classes": [],
+      "linesOfCode": 132,
+      "lastScan": "2026-09-10T03:30:02.698Z"
+    },
+    "src/app/api/cron/drain/route.ts": {
+      "imports": [
+        "@/lib/supabase",
+        "@/lib/env",
+        "@/lib/textback",
+        "@/lib/idempotency",
+        "@/lib/clients"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "POST",
+        "rows",
+        "clientData",
+        "handoffAge",
+        "maxSeconds"
+      ],
+      "classes": [],
+      "linesOfCode": 142,
+      "lastScan": "2026-09-10T03:30:02.700Z"
+    },
+    "src/app/api/dograh/context/route.ts": {
+      "imports": [
+        "@/lib/supabase",
+        "@/lib/knowledge"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "GET",
+        "formatBusinessHours"
+      ],
+      "classes": [],
+      "linesOfCode": 110,
+      "lastScan": "2026-09-10T03:30:02.700Z"
+    },
+    "src/app/api/dograh/tools/book-appointment/route.ts": {
+      "imports": [
+        "@/lib/supabase",
+        "@/lib/knowledge"
+      ],
+      "exports": [],
+      "functions": [
+        "POST"
+      ],
+      "classes": [],
+      "linesOfCode": 80,
+      "lastScan": "2026-09-10T03:30:02.701Z"
+    },
+    "src/app/api/dograh/tools/check-availability/route.ts": {
+      "imports": [
+        "@/lib/supabase",
+        "@/lib/knowledge",
+        "@/lib/availability"
+      ],
+      "exports": [],
+      "functions": [
+        "POST"
+      ],
+      "classes": [],
+      "linesOfCode": 65,
+      "lastScan": "2026-09-10T03:30:02.702Z"
+    },
+    "src/app/api/dograh/webhook/route.ts": {
+      "imports": [
+        "@/lib/supabase",
+        "@/lib/clients",
+        "@/lib/textback",
+        "@/lib/metrics"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "POST"
+      ],
+      "classes": [],
+      "linesOfCode": 121,
+      "lastScan": "2026-09-10T03:30:02.702Z"
+    },
+    "src/app/api/health/route.ts": {
+      "imports": [],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "GET"
+      ],
+      "classes": [],
+      "linesOfCode": 7,
+      "lastScan": "2026-09-10T03:30:02.755Z"
+    },
+    "src/app/api/sms/incoming/route.ts": {
+      "imports": [
+        "zod",
+        "@/lib/supabase",
+        "@/lib/clients",
+        "@/lib/twilio",
+        "@/lib/idempotency",
+        "@/lib/textback"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "POST"
+      ],
+      "classes": [],
+      "linesOfCode": 86,
+      "lastScan": "2026-09-10T03:30:02.756Z"
+    },
+    "src/app/api/vapi/route.ts": {
+      "imports": [
+        "zod",
+        "@/lib/supabase",
+        "@/lib/idempotency",
+        "@/lib/clients",
+        "@/lib/knowledge",
+        "@/lib/vapi/assistant",
+        "@/lib/vapi/handoff",
+        "@/lib/availability",
+        "@/lib/textback"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "POST",
+        "handleAssistantRequest",
+        "handleToolCalls",
+        "handleEndOfCallReport",
+        "callerNumber",
+        "client",
+        "cost",
+        "clientData"
+      ],
+      "classes": [],
+      "linesOfCode": 383,
+      "lastScan": "2026-09-10T03:30:02.757Z"
+    },
+    "src/app/api/voice/incoming/route.ts": {
+      "imports": [
+        "twilio",
+        "zod",
+        "@/lib/supabase",
+        "@/lib/clients",
+        "@/lib/twilio",
+        "@/lib/env"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "POST"
+      ],
+      "classes": [],
+      "linesOfCode": 64,
+      "lastScan": "2026-09-10T03:30:02.758Z"
+    },
+    "src/app/api/voice/status/route.ts": {
+      "imports": [
+        "zod",
+        "@/lib/supabase",
+        "@/lib/clients",
+        "@/lib/twilio",
+        "@/lib/idempotency",
+        "@/lib/textback",
+        "@/lib/crm",
+        "@/lib/vapi/handoff",
+        "@/lib/feature-flags",
+        "@/lib/metrics"
+      ],
+      "exports": [
+        "dynamic"
+      ],
+      "functions": [
+        "POST",
+        "callId"
+      ],
+      "classes": [],
+      "linesOfCode": 145,
+      "lastScan": "2026-09-10T03:30:02.759Z"
+    },
+    "src/lib/__tests__/availability.test.ts": {
+      "imports": [
+        "../availability",
+        "../supabase"
+      ],
+      "exports": [],
+      "functions": [],
+      "classes": [],
+      "linesOfCode": 206,
+      "lastScan": "2026-09-10T03:30:02.760Z"
+    },
+    "src/lib/availability.ts": {
+      "imports": [
+        "./supabase",
+        "./time"
+      ],
+      "exports": [],
+      "functions": [
+        "availableSlots",
+        "bookedRanges"
+      ],
+      "classes": [],
+      "linesOfCode": 132,
+      "lastScan": "2026-09-10T03:30:02.761Z"
+    },
+    "src/lib/clients.ts": {
+      "imports": [
+        "./supabase"
+      ],
+      "exports": [],
+      "functions": [
+        "clientByInboundNumber",
+        "upsertContact"
+      ],
+      "classes": [],
+      "linesOfCode": 62,
+      "lastScan": "2026-09-10T03:30:02.761Z"
+    },
+    "src/lib/crm/hubspot.ts": {
+      "imports": [],
+      "exports": [
+        "hubspotCrm"
+      ],
+      "functions": [
+        "token",
+        "hs",
+        "t",
+        "found",
+        "created"
+      ],
+      "classes": [],
+      "linesOfCode": 119,
+      "lastScan": "2026-09-10T03:30:02.762Z"
+    },
+    "src/lib/crm/index.ts": {
+      "imports": [
+        "./supabase",
+        "./hubspot",
+        "./noop"
+      ],
+      "exports": [
+        "getCrm"
+      ],
+      "functions": [
+        "getCrm"
+      ],
+      "classes": [],
+      "linesOfCode": 41,
+      "lastScan": "2026-09-10T03:30:02.762Z"
+    },
+    "src/lib/crm/noop.ts": {
+      "imports": [],
+      "exports": [
+        "noopCrm"
+      ],
+      "functions": [],
+      "classes": [],
+      "linesOfCode": 13,
+      "lastScan": "2026-09-10T03:30:02.764Z"
+    },
+    "src/lib/crm/supabase.ts": {
+      "imports": [
+        "../supabase"
+      ],
+      "exports": [
+        "supabaseCrm"
+      ],
+      "functions": [],
+      "classes": [],
+      "linesOfCode": 43,
+      "lastScan": "2026-09-10T03:30:02.764Z"
+    },
+    "src/lib/env.ts": {
+      "imports": [
+        "zod"
+      ],
+      "exports": [
+        "env"
+      ],
+      "functions": [
+        "env"
+      ],
+      "classes": [],
+      "linesOfCode": 32,
+      "lastScan": "2026-09-10T03:30:02.765Z"
+    },
+    "src/lib/feature-flags.ts": {
+      "imports": [
+        "./supabase"
+      ],
+      "exports": [],
+      "functions": [
+        "getDograhRolloutPercentage",
+        "shouldRouteToDograh",
+        "hashCallerNumber",
+        "setDograhRolloutPercentage",
+        "getRolloutStatus"
+      ],
+      "classes": [],
+      "linesOfCode": 121,
+      "lastScan": "2026-09-10T03:30:02.765Z"
+    },
+    "src/lib/idempotency.ts": {
+      "imports": [
+        "./supabase"
+      ],
+      "exports": [],
+      "functions": [
+        "claimEvent"
+      ],
+      "classes": [],
+      "linesOfCode": 26,
+      "lastScan": "2026-09-10T03:30:02.765Z"
+    },
+    "src/lib/knowledge.ts": {
+      "imports": [
+        "./supabase"
+      ],
+      "exports": [
+        "resolveSlotMinutes"
+      ],
+      "functions": [
+        "loadKnowledge",
+        "resolveSlotMinutes"
+      ],
+      "classes": [],
+      "linesOfCode": 69,
+      "lastScan": "2026-09-10T03:30:02.766Z"
+    },
+    "src/lib/metrics.ts": {
+      "imports": [
+        "./supabase"
+      ],
+      "exports": [],
+      "functions": [
+        "recordCallMetric",
+        "getCanaryMetrics",
+        "getPerClientMetrics",
+        "canaryHealthCheck",
+        "errorRate"
+      ],
+      "classes": [],
+      "linesOfCode": 212,
+      "lastScan": "2026-09-10T03:30:02.766Z"
+    },
+    "src/lib/quiet-hours.ts": {
+      "imports": [],
+      "exports": [
+        "localHour",
+        "isQuietHour",
+        "inQuietHours",
+        "nextAllowedSendTime"
+      ],
+      "functions": [
+        "localHour",
+        "isQuietHour",
+        "inQuietHours",
+        "nextAllowedSendTime"
+      ],
+      "classes": [],
+      "linesOfCode": 51,
+      "lastScan": "2026-09-10T03:30:02.769Z"
+    },
+    "src/lib/supabase.ts": {
+      "imports": [
+        "@supabase/supabase-js",
+        "./env"
+      ],
+      "exports": [
+        "db"
+      ],
+      "functions": [
+        "db"
+      ],
+      "classes": [],
+      "linesOfCode": 18,
+      "lastScan": "2026-09-10T03:30:02.770Z"
+    },
+    "src/lib/textback.ts": {
+      "imports": [
+        "./supabase",
+        "./env",
+        "./twilio",
+        "./quiet-hours",
+        "./crm"
+      ],
+      "exports": [
+        "renderTemplate"
+      ],
+      "functions": [
+        "renderTemplate",
+        "sendTextback",
+        "deliver"
+      ],
+      "classes": [],
+      "linesOfCode": 165,
+      "lastScan": "2026-09-10T03:30:02.771Z"
+    },
+    "src/lib/time.ts": {
+      "imports": [],
+      "exports": [
+        "weekdayKey",
+        "utcToZonedParts",
+        "zonedPartsToUtc",
+        "parseHhMm",
+        "speakSlot"
+      ],
+      "functions": [
+        "weekdayKey",
+        "utcToZonedParts",
+        "offsetMinutes",
+        "zonedPartsToUtc",
+        "parseHhMm",
+        "speakSlot",
+        "shortDay"
+      ],
+      "classes": [],
+      "linesOfCode": 109,
+      "lastScan": "2026-09-10T03:30:02.771Z"
+    },
+    "src/lib/twilio.ts": {
+      "imports": [
+        "twilio",
+        "./env"
+      ],
+      "exports": [
+        "twilioClient",
+        "verifyTwilioSignature",
+        "emptyTwiml",
+        "twimlResponse"
+      ],
+      "functions": [
+        "twilioClient",
+        "readFormBody",
+        "verifyTwilioSignature",
+        "emptyTwiml",
+        "twimlResponse"
+      ],
+      "classes": [],
+      "linesOfCode": 57,
+      "lastScan": "2026-09-10T03:30:02.772Z"
+    },
+    "src/lib/vapi/__tests__/assistant.test.ts": {
+      "imports": [
+        "../assistant"
+      ],
+      "exports": [],
+      "functions": [
+        "toolNames"
+      ],
+      "classes": [],
+      "linesOfCode": 170,
+      "lastScan": "2026-09-10T03:30:02.773Z"
+    },
+    "src/lib/vapi/__tests__/handoff.test.ts": {
+      "imports": [
+        "../handoff",
+        "../../supabase"
+      ],
+      "exports": [],
+      "functions": [],
+      "classes": [],
+      "linesOfCode": 203,
+      "lastScan": "2026-09-10T03:30:02.774Z"
+    },
+    "src/lib/vapi/assistant.ts": {
+      "imports": [
+        "../time",
+        "./tools"
+      ],
+      "exports": [
+        "buildAssistant"
+      ],
+      "functions": [
+        "buildAssistant",
+        "composeSystemPrompt"
+      ],
+      "classes": [],
+      "linesOfCode": 90,
+      "lastScan": "2026-09-10T03:30:02.774Z"
+    },
+    "src/lib/vapi/handoff.ts": {
+      "imports": [
+        "crypto",
+        "../supabase",
+        "../clients"
+      ],
+      "exports": [],
+      "functions": [
+        "mintHandoffToken",
+        "resolveTenant",
+        "consumeHandoffToken",
+        "clientData"
+      ],
+      "classes": [],
+      "linesOfCode": 112,
+      "lastScan": "2026-09-10T03:30:02.775Z"
+    },
+    "src/lib/vapi/tools.ts": {
+      "imports": [],
+      "exports": [
+        "checkAvailabilityTool",
+        "bookAppointmentTool",
+        "escalateTool"
+      ],
+      "functions": [],
+      "classes": [],
+      "linesOfCode": 92,
+      "lastScan": "2026-09-10T03:30:02.776Z"
+    }
+  },
+  "functions": {
+    "delay": {
+      "file": "scripts/mock-vapi-server.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "run": {
+      "file": "scripts/mock-vapi-server.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "arg": {
+      "file": "scripts/seed-client.ts",
+      "calls": [
+        "toString"
+      ],
+      "calledBy": []
+    },
+    "required": {
+      "file": "scripts/seed-client.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "main": {
+      "file": "scripts/seed-client.ts",
+      "calls": [
+        "db",
+        "buildAssistant",
+        "toString"
+      ],
+      "calledBy": []
+    },
+    "seed": {
+      "file": "scripts/seed-test-data.ts",
+      "calls": [
+        "db",
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "testAssistantRequest": {
+      "file": "scripts/simulate-voice.ts",
+      "calls": [
+        "db",
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "testBookingIdempotency": {
+      "file": "scripts/simulate-voice.ts",
+      "calls": [
+        "db",
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "testEndOfCallReport": {
+      "file": "scripts/simulate-voice.ts",
+      "calls": [
+        "db",
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "toolCount": {
+      "file": "scripts/simulate-voice.ts",
+      "calls": [
+        "db",
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "tools": {
+      "file": "scripts/simulate-voice.ts",
+      "calls": [
+        "db",
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "handoffId": {
+      "file": "scripts/simulate-voice.ts",
+      "calls": [
+        "db",
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "callId": {
+      "file": "scripts/simulate-voice.ts",
+      "calls": [
+        "db",
+        "buildAssistant",
+        "verifyTwilioSignature",
+        "emptyTwiml",
+        "getCrm"
+      ],
+      "calledBy": []
+    },
+    "post": {
+      "file": "scripts/simulate.ts",
+      "calls": [
+        "toString"
+      ],
+      "calledBy": []
+    },
+    "eq": {
+      "file": "scripts/verify-logic.ts",
+      "calls": [
+        "isQuietHour",
+        "localHour",
+        "inQuietHours",
+        "nextAllowedSendTime",
+        "renderTemplate"
+      ],
+      "calledBy": []
+    },
+    "authorize": {
+      "file": "src/app/api/admin/canary/route.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "GET": {
+      "file": "src/app/api/admin/canary/route.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "POST": {
+      "file": "src/app/api/admin/canary/route.ts",
+      "calls": [
+        "env",
+        "db",
+        "resolveSlotMinutes",
+        "verifyTwilioSignature",
+        "emptyTwiml",
+        "buildAssistant",
+        "toString",
+        "twimlResponse",
+        "getCrm"
+      ],
+      "calledBy": []
+    },
+    "rows": {
+      "file": "src/app/api/cron/drain/route.ts",
+      "calls": [
+        "env",
+        "db"
+      ],
+      "calledBy": []
+    },
+    "clientData": {
+      "file": "src/app/api/cron/drain/route.ts",
+      "calls": [
+        "env",
+        "db",
+        "buildAssistant",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "handoffAge": {
+      "file": "src/app/api/cron/drain/route.ts",
+      "calls": [
+        "env",
+        "db"
+      ],
+      "calledBy": []
+    },
+    "maxSeconds": {
+      "file": "src/app/api/cron/drain/route.ts",
+      "calls": [
+        "env",
+        "db"
+      ],
+      "calledBy": []
+    },
+    "formatBusinessHours": {
+      "file": "src/app/api/dograh/context/route.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "handleAssistantRequest": {
+      "file": "src/app/api/vapi/route.ts",
+      "calls": [
+        "buildAssistant",
+        "db",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "handleToolCalls": {
+      "file": "src/app/api/vapi/route.ts",
+      "calls": [
+        "buildAssistant",
+        "db",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "handleEndOfCallReport": {
+      "file": "src/app/api/vapi/route.ts",
+      "calls": [
+        "buildAssistant",
+        "db",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "callerNumber": {
+      "file": "src/app/api/vapi/route.ts",
+      "calls": [
+        "buildAssistant",
+        "db",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "client": {
+      "file": "src/app/api/vapi/route.ts",
+      "calls": [
+        "buildAssistant",
+        "db",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "cost": {
+      "file": "src/app/api/vapi/route.ts",
+      "calls": [
+        "buildAssistant",
+        "db",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "availableSlots": {
+      "file": "src/lib/availability.ts",
+      "calls": [
+        "db",
+        "utcToZonedParts",
+        "parseHhMm",
+        "zonedPartsToUtc"
+      ],
+      "calledBy": []
+    },
+    "bookedRanges": {
+      "file": "src/lib/availability.ts",
+      "calls": [
+        "db",
+        "utcToZonedParts",
+        "parseHhMm",
+        "zonedPartsToUtc"
+      ],
+      "calledBy": []
+    },
+    "clientByInboundNumber": {
+      "file": "src/lib/clients.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "upsertContact": {
+      "file": "src/lib/clients.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "token": {
+      "file": "src/lib/crm/hubspot.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "hs": {
+      "file": "src/lib/crm/hubspot.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "t": {
+      "file": "src/lib/crm/hubspot.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "found": {
+      "file": "src/lib/crm/hubspot.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "created": {
+      "file": "src/lib/crm/hubspot.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "getCrm": {
+      "file": "src/lib/crm/index.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "env": {
+      "file": "src/lib/env.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "getDograhRolloutPercentage": {
+      "file": "src/lib/feature-flags.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "shouldRouteToDograh": {
+      "file": "src/lib/feature-flags.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "hashCallerNumber": {
+      "file": "src/lib/feature-flags.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "setDograhRolloutPercentage": {
+      "file": "src/lib/feature-flags.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "getRolloutStatus": {
+      "file": "src/lib/feature-flags.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "claimEvent": {
+      "file": "src/lib/idempotency.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "loadKnowledge": {
+      "file": "src/lib/knowledge.ts",
+      "calls": [
+        "db",
+        "resolveSlotMinutes"
+      ],
+      "calledBy": []
+    },
+    "resolveSlotMinutes": {
+      "file": "src/lib/knowledge.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "recordCallMetric": {
+      "file": "src/lib/metrics.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "getCanaryMetrics": {
+      "file": "src/lib/metrics.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "getPerClientMetrics": {
+      "file": "src/lib/metrics.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "canaryHealthCheck": {
+      "file": "src/lib/metrics.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "errorRate": {
+      "file": "src/lib/metrics.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "localHour": {
+      "file": "src/lib/quiet-hours.ts",
+      "calls": [
+        "isQuietHour",
+        "inQuietHours",
+        "nextAllowedSendTime"
+      ],
+      "calledBy": []
+    },
+    "isQuietHour": {
+      "file": "src/lib/quiet-hours.ts",
+      "calls": [
+        "localHour",
+        "inQuietHours",
+        "nextAllowedSendTime"
+      ],
+      "calledBy": []
+    },
+    "inQuietHours": {
+      "file": "src/lib/quiet-hours.ts",
+      "calls": [
+        "localHour",
+        "isQuietHour",
+        "nextAllowedSendTime"
+      ],
+      "calledBy": []
+    },
+    "nextAllowedSendTime": {
+      "file": "src/lib/quiet-hours.ts",
+      "calls": [
+        "localHour",
+        "isQuietHour",
+        "inQuietHours"
+      ],
+      "calledBy": []
+    },
+    "db": {
+      "file": "src/lib/supabase.ts",
+      "calls": [
+        "env"
+      ],
+      "calledBy": []
+    },
+    "renderTemplate": {
+      "file": "src/lib/textback.ts",
+      "calls": [
+        "db",
+        "inQuietHours",
+        "nextAllowedSendTime",
+        "env",
+        "twilioClient",
+        "getCrm"
+      ],
+      "calledBy": []
+    },
+    "sendTextback": {
+      "file": "src/lib/textback.ts",
+      "calls": [
+        "renderTemplate",
+        "db",
+        "inQuietHours",
+        "nextAllowedSendTime",
+        "env",
+        "twilioClient",
+        "getCrm"
+      ],
+      "calledBy": []
+    },
+    "deliver": {
+      "file": "src/lib/textback.ts",
+      "calls": [
+        "renderTemplate",
+        "db",
+        "inQuietHours",
+        "nextAllowedSendTime",
+        "env",
+        "twilioClient",
+        "getCrm"
+      ],
+      "calledBy": []
+    },
+    "weekdayKey": {
+      "file": "src/lib/time.ts",
+      "calls": [
+        "utcToZonedParts",
+        "zonedPartsToUtc",
+        "parseHhMm",
+        "speakSlot"
+      ],
+      "calledBy": []
+    },
+    "utcToZonedParts": {
+      "file": "src/lib/time.ts",
+      "calls": [
+        "weekdayKey",
+        "zonedPartsToUtc",
+        "parseHhMm",
+        "speakSlot"
+      ],
+      "calledBy": []
+    },
+    "offsetMinutes": {
+      "file": "src/lib/time.ts",
+      "calls": [
+        "weekdayKey",
+        "utcToZonedParts",
+        "zonedPartsToUtc",
+        "parseHhMm",
+        "speakSlot"
+      ],
+      "calledBy": []
+    },
+    "zonedPartsToUtc": {
+      "file": "src/lib/time.ts",
+      "calls": [
+        "weekdayKey",
+        "utcToZonedParts",
+        "parseHhMm",
+        "speakSlot"
+      ],
+      "calledBy": []
+    },
+    "parseHhMm": {
+      "file": "src/lib/time.ts",
+      "calls": [
+        "weekdayKey",
+        "utcToZonedParts",
+        "zonedPartsToUtc",
+        "speakSlot"
+      ],
+      "calledBy": []
+    },
+    "speakSlot": {
+      "file": "src/lib/time.ts",
+      "calls": [
+        "weekdayKey",
+        "utcToZonedParts",
+        "zonedPartsToUtc",
+        "parseHhMm"
+      ],
+      "calledBy": []
+    },
+    "shortDay": {
+      "file": "src/lib/time.ts",
+      "calls": [
+        "weekdayKey",
+        "utcToZonedParts",
+        "zonedPartsToUtc",
+        "parseHhMm",
+        "speakSlot"
+      ],
+      "calledBy": []
+    },
+    "twilioClient": {
+      "file": "src/lib/twilio.ts",
+      "calls": [
+        "env",
+        "verifyTwilioSignature",
+        "toString",
+        "emptyTwiml",
+        "twimlResponse"
+      ],
+      "calledBy": []
+    },
+    "readFormBody": {
+      "file": "src/lib/twilio.ts",
+      "calls": [
+        "twilioClient",
+        "env",
+        "verifyTwilioSignature",
+        "toString",
+        "emptyTwiml",
+        "twimlResponse"
+      ],
+      "calledBy": []
+    },
+    "verifyTwilioSignature": {
+      "file": "src/lib/twilio.ts",
+      "calls": [
+        "twilioClient",
+        "env",
+        "toString",
+        "emptyTwiml",
+        "twimlResponse"
+      ],
+      "calledBy": []
+    },
+    "emptyTwiml": {
+      "file": "src/lib/twilio.ts",
+      "calls": [
+        "twilioClient",
+        "env",
+        "verifyTwilioSignature",
+        "toString",
+        "twimlResponse"
+      ],
+      "calledBy": []
+    },
+    "twimlResponse": {
+      "file": "src/lib/twilio.ts",
+      "calls": [
+        "twilioClient",
+        "env",
+        "verifyTwilioSignature",
+        "toString",
+        "emptyTwiml"
+      ],
+      "calledBy": []
+    },
+    "toolNames": {
+      "file": "src/lib/vapi/__tests__/assistant.test.ts",
+      "calls": [
+        "buildAssistant",
+        "toString"
+      ],
+      "calledBy": []
+    },
+    "buildAssistant": {
+      "file": "src/lib/vapi/assistant.ts",
+      "calls": [],
+      "calledBy": []
+    },
+    "composeSystemPrompt": {
+      "file": "src/lib/vapi/assistant.ts",
+      "calls": [
+        "buildAssistant"
+      ],
+      "calledBy": []
+    },
+    "mintHandoffToken": {
+      "file": "src/lib/vapi/handoff.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "resolveTenant": {
+      "file": "src/lib/vapi/handoff.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    },
+    "consumeHandoffToken": {
+      "file": "src/lib/vapi/handoff.ts",
+      "calls": [
+        "db"
+      ],
+      "calledBy": []
+    }
+  },
+  "imports": {},
+  "buildTime": "2026-09-10T03:30:02.249Z"
+}
