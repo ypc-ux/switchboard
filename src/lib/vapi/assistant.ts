@@ -74,11 +74,24 @@ function composeSystemPrompt(client: Client, knowledge: Knowledge): string {
   parts.push(
     "\nYour workflow:\n" +
       "1. Listen to what the caller needs\n" +
-      "2. Use check_availability to see open slots for their preferred service\n" +
-      "3. Propose specific times and let them choose\n" +
-      "4. Use book_appointment to confirm the booking\n" +
-      "5. If you cannot help, use escalate to connect them with a human\n" +
-      "Be friendly, professional, and concise. Always confirm the appointment details before booking.",
+      "2. Ask qualifying questions to understand urgency, timeline, and fit:\n" +
+      "   - When do they need this service? (urgency signal)\n" +
+      "   - Have they experienced this issue before? (decision confidence)\n" +
+      "   - Is there a budget in mind? (financial capacity signal)\n" +
+      "   - Are you the decision maker, or do you need to check with someone? (authority signal)\n" +
+      "3. Use check_availability to see open slots for their preferred service\n" +
+      "4. Propose specific times and let them choose\n" +
+      "5. Use book_appointment to confirm the booking\n" +
+      "6. If they're not ready to book or you cannot help, use escalate to connect them with a human\n" +
+      "Be friendly, professional, and concise. Always gather their full name and phone number before ending the call.",
+  );
+
+  parts.push(
+    "\nLead qualification notes:\n" +
+    "Your answers to qualifying questions are recorded and scored to prioritize leads. " +
+    "Gather this information naturally through conversation—don't make it feel like an interrogation. " +
+    "Leads who are urgent, have budget approval, and can decide immediately are highest priority. " +
+    "Make sure you capture the caller's name and phone number accurately.",
   );
 
   if (client.agent_instructions) {

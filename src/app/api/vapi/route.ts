@@ -8,6 +8,7 @@ import { buildAssistant } from "@/lib/vapi/assistant";
 import { resolveTenant, consumeHandoffToken } from "@/lib/vapi/handoff";
 import { availableSlots } from "@/lib/availability";
 import { sendTextback } from "@/lib/textback";
+import { scoreCallAndTrackLead, updateCallWithLeadScore } from "@/lib/vapi/lead-qualifier-integration";
 
 export const dynamic = "force-dynamic";
 
@@ -332,6 +333,10 @@ async function handleEndOfCallReport(
   const clientId = handoff.client_id;
   const callId = handoff.call_id;
 
+  // Get client services for lead qualification
+  const knowledge = await loadKnowledge(clientId);
+  const clientServices = knowledge.services || [];
+
   // Update the call record
   if (callId) {
     await db()
@@ -346,6 +351,36 @@ async function handleEndOfCallReport(
       })
       .eq("id", callId);
   }
+
+  // Score the call and track as qualified lead
+  const qualificationResult = await scoreCallAndTrackLead(
+    db(),
+    {
+      vapi_call_id: vapiCallId || "",
+      client_id: clientId,
+      call_id: callId || null,
+      caller_number: callerNumber,
+      transcript: transcript || "",
+      summary: summary || "",
+      duration_seconds: 0, // TODO: Extract from Vapi report if available
+    },
+    clientServices,
+  );
+
+  // Update call with lead score
+  if (callId) {
+    await updateCallWithLeadScore(db(), callId, qualificationResult);
+  }
+
+  // Log qualification results
+  console.info("call qualified", {
+    clientId,
+    callId,
+    qualified: qualificationResult.qualified,
+    score: qualificationResult.score.total,
+    decision: qualificationResult.score.decision,
+    trackingId: qualificationResult.tracking_id,
+  });
 
   // Check if a booking was made
   const { data: bookings } = await db()
@@ -366,9 +401,26 @@ async function handleEndOfCallReport(
       callId: callId || null,
       bodyOverride: `Great! Your appointment is confirmed. We'll see you soon!`,
     });
+  } else if (qualificationResult.qualified) {
+    // Qualified lead - send transfer confirmation
+    await upsertContact(clientId, callerNumber);
+    await sendTextback({
+      client: clientData as any,
+      toNumber: callerNumber,
+      callId: callId || null,
+      bodyOverride: `Thanks for calling! You've been transferred to our specialist team. Someone will follow up shortly.`,
+    });
+  } else if (qualificationResult.score.decision === "queue") {
+    // Borderline lead - queue for human review
+    await upsertContact(clientId, callerNumber);
+    await sendTextback({
+      client: clientData as any,
+      toNumber: callerNumber,
+      callId: callId || null,
+      bodyOverride: `Thanks for your interest! You'll hear from us shortly to discuss your needs.`,
+    });
   } else {
-    // No booking made, send the missed call text-back
-    // (unless we're in quiet hours, it will be deferred)
+    // Non-qualified - send booking link via default text-back
     await upsertContact(clientId, callerNumber);
     await sendTextback({
       client: clientData as any,
@@ -377,6 +429,6 @@ async function handleEndOfCallReport(
     });
   }
 
-  console.info("end-of-call-report processed", { clientId, bookingMade, endedReason });
+  console.info("end-of-call-report processed", { clientId, bookingMade, endedReason, qualified: qualificationResult.qualified });
   return new Response("ok", { status: 200 });
 }
